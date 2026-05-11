@@ -1,12 +1,11 @@
 import json
 import random
-import time
 import boto3
 from datetime import datetime
 
 kinesis_client = boto3.client('kinesis')
 
-def generate_warehouse_sensor_data():
+def generate_warehouse_event():
     return {
         'sensor_type': 'warehouse',
         'warehouse_id': f"WH-{random.randint(1, 6)}",
@@ -15,7 +14,7 @@ def generate_warehouse_sensor_data():
         'timestamp': datetime.utcnow().isoformat()
     }
 
-def generate_vehicle_sensor_data():
+def generate_vehicle_event():
     return {
         'sensor_type': 'vehicle',
         'vehicle_id': f"VH-{random.randint(1, 6)}",
@@ -29,18 +28,24 @@ def generate_vehicle_sensor_data():
     }
 
 
+STREAM_NAME = 'iot'
+
 def lambda_handler(event, context):
 
-    if random.choice([True, False]):
-        sensor_data = generate_warehouse_sensor_data()
-    else:
-        sensor_data = generate_vehicle_sensor_data()
+    sensor_type = random.choices(
+        ['warehouse', 'vehicle'],
+        weights=[70, 30]
+    )[0]
 
+    if sensor_type == 'warehouse':
+        sensor_data = generate_warehouse_event()
+    else:
+        sensor_data = generate_vehicle_event()
 
     sensor_data_json = json.dumps(sensor_data)
 
     response = kinesis_client.put_record(
-        StreamName='iot',
+        StreamName=STREAM_NAME,
         Data=sensor_data_json,
         PartitionKey=str(random.randint(1, 1000))
     )
