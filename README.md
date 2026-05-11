@@ -80,11 +80,6 @@ Athena
 
 ![Kinesis Stream](images/kinesis-stream.png)
 
----
-
-## Lambda Consumer processando eventos
-
-![Lambda Consumer](images/lambda-consumer.png)
 
 ---
 
