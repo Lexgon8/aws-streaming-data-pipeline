@@ -1,1 +1,3 @@
-
+SELECT *
+FROM iot
+LIMIT 10;
